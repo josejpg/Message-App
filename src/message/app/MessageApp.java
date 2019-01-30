@@ -13,17 +13,19 @@ import javafx.stage.Stage;
 
 /**
  *
- * @author Laptop-Jota
+ * @author Jose J. Pardines Garcia
  */
 public class MessageApp extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("loginTemplate.fxml"));
         
         Scene scene = new Scene(root);
-        
         stage.setScene(scene);
+        stage.setTitle("Login");
+        scene.getStylesheets().add("/assets/styles/_colors.css");
+        scene.getStylesheets().add("/assets/styles/_buttons.css");
         stage.show();
     }
 
