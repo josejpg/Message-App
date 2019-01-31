@@ -26,8 +26,8 @@
             <Insets />
          </opaqueInsets>
          <stylesheets>
-            <URL value="@../assets/styles/_colors.css" />
             <URL value="@../assets/styles/_buttons.css" />
+            <URL value="@../assets/styles/_colors.css" />
          </stylesheets>
     </AnchorPane>
   </children>

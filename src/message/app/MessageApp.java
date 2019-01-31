@@ -24,8 +24,6 @@ public class MessageApp extends Application {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Login");
-        scene.getStylesheets().add("/assets/styles/_colors.css");
-        scene.getStylesheets().add("/assets/styles/_buttons.css");
         stage.show();
     }
 
@@ -35,5 +33,4 @@ public class MessageApp extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
 }

@@ -26,6 +26,7 @@ public class Message {
     
     /**
      * Init a Message with data
+     * @param _id
      * @param from
      * @param to
      * @param message

@@ -15,6 +15,8 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import static message.utils.MessageUtils.*;
+import static message.utils.ServiceUtils.*;
 
 /**
  *
@@ -40,7 +42,18 @@ public class Login implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         lblError.setVisible(false);
-        
-    }    
+    }
+    
+    
+    private void submitLogin(){
+        lblError.setVisible(false);
+        if( txtUser.getText().isEmpty() ){
+            showError( "Error", "User is required" );
+        }else if( txtPassword.getText().isEmpty() || txtPassword.getText().length() < 8 ){
+            showError( "Error", "Password is required and has to have 8 char length minimum" );
+        }else{
+            //getResponse( "POST" )
+        }
+    }
     
 }

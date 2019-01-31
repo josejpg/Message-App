@@ -37,6 +37,10 @@
                   <String fx:value="info" />
                </styleClass></Button>
          </children>
+         <stylesheets>
+            <URL value="@../../assets/styles/_buttons.css" />
+            <URL value="@../../assets/styles/_colors.css" />
+         </stylesheets>
     </AnchorPane>
   </children>
    <stylesheets>
