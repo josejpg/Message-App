@@ -19,13 +19,10 @@ public class MessageApp extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("loginTemplate.fxml"));
-        
-        Scene scene = new Scene(root);
+        Parent root = FXMLLoader.load(getClass().getResource("/message/app/templates/loginTemplate.fxml"));      
+        Scene scene = new Scene(root, 345, 211);
         stage.setScene(scene);
         stage.setTitle("Login");
-        scene.getStylesheets().add("/assets/styles/_colors.css");
-        scene.getStylesheets().add("/assets/styles/_buttons.css");
         stage.show();
     }
 
@@ -35,5 +32,4 @@ public class MessageApp extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
 }

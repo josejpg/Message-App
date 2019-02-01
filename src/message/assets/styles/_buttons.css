@@ -1,9 +1,8 @@
 .btn {
     -fx-font-weight: 400;
-    -fx-border: 1px solid transparent;
-    -fx-padding: .375rem .75rem;
-    -fx-font-size: 1rem;
+    -fx-padding: 37.5% 75%;
+    -fx-font-size: 100%;
     -fx-line-height: 1.5;
-    -fx-border-radius: .25rem;
+    -fx-border-radius: 25%;
     -fx-transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
