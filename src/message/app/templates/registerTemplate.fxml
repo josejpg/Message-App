@@ -12,7 +12,7 @@
 
 <VBox prefHeight="187.0" prefWidth="389.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="218.0" prefWidth="422.0" VBox.vgrow="ALWAYS">
+    <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="218.0" prefWidth="422.0" style="-fx-background-color: #fff;" VBox.vgrow="ALWAYS">
          <children>
             <Label id="lblUser" fx:id="lblUser" layoutX="34.0" layoutY="40.0" text="User" />
             <Label id="lblPassword" fx:id="lblPassword" layoutX="33.0" layoutY="74.0" text="Password" />
@@ -37,14 +37,10 @@
                   <String fx:value="info" />
                </styleClass></Button>
          </children>
-         <stylesheets>
-            <URL value="@../../assets/styles/_buttons.css" />
-            <URL value="@../../assets/styles/_colors.css" />
-         </stylesheets>
     </AnchorPane>
   </children>
    <stylesheets>
-        <URL value="@../assets/styles/_colors.css" />
-        <URL value="@../assets/styles/_buttons.css" />
-   </stylesheets>
+        <URL value="@../../assets/styles/_colors.css" />
+        <URL value="@../../assets/styles/_buttons.css" />
+     </stylesheets>
 </VBox>

@@ -12,7 +12,7 @@ package message.utils;
 public class APIUtils {
     private String API_URL = "http://localhost";
     private String API_PORT = "8081";
-    private String API_PATH = "/api";
+    private String API_PATH = "api";
 
     public APIUtils() {}
     
@@ -51,4 +51,10 @@ public class APIUtils {
      * @return 
      */
     public String getApiPath(){ return this.API_PATH; }
+    
+    /**
+     * Get the complete url to API connect
+     * @return 
+     */
+    public String getConnection(){ return String.format( "%s:%s/%s", this.API_URL, this.API_PORT, this.API_PATH ); }
 }
