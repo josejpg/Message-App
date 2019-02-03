@@ -6,21 +6,25 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="187.0" prefWidth="389.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="187.0" prefWidth="389.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="message.app.controllers.RegisterController">
   <children>
     <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="218.0" prefWidth="422.0" style="-fx-background-color: #fff;" VBox.vgrow="ALWAYS">
          <children>
             <Label id="lblUser" fx:id="lblUser" layoutX="34.0" layoutY="40.0" text="User" />
             <Label id="lblPassword" fx:id="lblPassword" layoutX="33.0" layoutY="74.0" text="Password" />
+            <TextField id="txtUser" fx:id="txtUser" layoutX="129.0" layoutY="36.0" promptText="User" />
             <Label id="lblPassword2" fx:id="lblPassword2" layoutX="33.0" layoutY="112.0" text="Repeat pass" />
             <PasswordField id="txtPassword" fx:id="txtPassword" layoutX="129.0" layoutY="70.0" promptText="Password" />
             <PasswordField id="txtPassword2" fx:id="txtPassword2" layoutX="129.0" layoutY="108.0" promptText="Repeat your password" />
-            <TextField id="txtUser" fx:id="txtUser" layoutX="129.0" layoutY="36.0" promptText="User" />
-            <ImageView id="profileImage" fx:id="profileImage" fitHeight="99.0" fitWidth="94.0" layoutX="306.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView id="profileImage" fx:id="profileImage" fitHeight="99.0" fitWidth="94.0" layoutX="306.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../assets/images/default-user.png" />
+               </image></ImageView>
             <Button id="btnCancel" fx:id="btnCancel" layoutX="26.0" layoutY="156.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="103.0" text="Cancel">
                <styleClass>
                   <String fx:value="btn" />

@@ -6,6 +6,7 @@
 package message.app.controllers;
 
 import com.google.gson.Gson;
+import java.awt.Event;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -15,6 +16,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -24,6 +26,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import message.app.stages.DashboardStage;
+import message.app.stages.RegisterStage;
 import message.models.*;
 import message.utils.*;
 import message.crud.UserPost;
@@ -52,9 +57,21 @@ public class LoginController implements Initializable {
     // API connection data
     private final APIUtils api = new APIUtils();
     
+    // Actual stage
+    Stage actualStage = null;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         lblError.setVisible(false);
+        btnLogin.setCursor(Cursor.HAND);
+        
+        txtUser.setOnAction((ActionEvent e) -> {
+            submitLogin();
+        });
+        
+        txtPassword.setOnAction((ActionEvent e) -> {
+            submitLogin();
+        });
 
         btnLogin.setOnAction((ActionEvent e) -> {
             try {                  
@@ -107,15 +124,11 @@ public class LoginController implements Initializable {
                     MessageUtils.showError( "Error", response.getError() );
                 }else{
                     try {
-                        ServiceUtils.setToken( response.getToken() );
-                        Stage actualStage = (Stage) btnLogin.getScene().getWindow();
+                        ServiceUtils.setToken( response.getToken() );  
+                        actualStage = (Stage) btnLogin.getScene().getWindow();
                         actualStage.close();
-                        Stage stage = new Stage();
-                        Parent root = FXMLLoader.load(getClass().getResource("/message/app/templates/yourMessagesTemplate.fxml"));
-                        Scene scene = new Scene(root, 644, 420);
-                        stage.setScene(scene);
-                        stage.setTitle("Dashboard");
-                        stage.show();
+                        DashboardStage dashboardStage = new DashboardStage();
+                        dashboardStage.showStage();
                     } catch (IOException ex) {
                         Logger
                             .getLogger( LoginController.class.getName() )
@@ -132,21 +145,14 @@ public class LoginController implements Initializable {
     
     private void newReigster(){
         try {
+            txtUser.setDisable(true);
+            txtPassword.setDisable(true);
             btnLogin.setDisable(true);
             lnkRegister.setDisable(true);
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            Parent root = FXMLLoader.load(getClass().getResource("/message/app/templates/registerTemplate.fxml"));
-            Scene scene = new Scene(root, 422, 218);
-            stage.setScene(scene);
-            stage.setTitle("Register");
-            stage.show();
-            
-            stage.setOnHidden( e -> {
-                System.out.println(e);
-                btnLogin.setDisable(false);
-                lnkRegister.setDisable(false);
-            });
+            actualStage = (Stage) btnLogin.getScene().getWindow();
+            actualStage.close();
+            RegisterStage registerStage = new RegisterStage();
+            registerStage.showStage();
         } catch (IOException ex) {
             Logger
                 .getLogger( LoginController.class.getName() )
