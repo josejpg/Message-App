@@ -15,19 +15,19 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="941.0" prefWidth="644.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="941.0" prefWidth="644.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="message.app.controllers.DashboardController">
   <children>
     <MenuBar stylesheets="@../../../assets/styles/_colors.css" VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="Dashboard">
           <items>
-            <MenuItem mnemonicParsing="false" text="My Messages" />
-            <MenuItem mnemonicParsing="false" text="New Message" />
+            <MenuItem id="itemMessage" fx:id="itemMessages" mnemonicParsing="false" text="My Messages" />
+            <MenuItem id="itemSend" fx:id="itemSend" mnemonicParsing="false" text="New Message" />
           </items>
         </Menu>
       </menus>
     </MenuBar>
-    <AnchorPane maxHeight="-Infinity" maxWidth="-1.0" minHeight="-Infinity" prefHeight="420.0" prefWidth="644.0" VBox.vgrow="ALWAYS">
+    <AnchorPane id="anchorPaneMessages" fx:id="anchorPaneMessages" maxHeight="-Infinity" maxWidth="-1.0" minHeight="-Infinity" prefHeight="420.0" prefWidth="644.0" VBox.vgrow="ALWAYS">
          <children>
             <Separator layoutX="-2.0" layoutY="76.0" prefWidth="646.0" />
             <Label id="lblUser" fx:id="lblUser" layoutX="14.0" layoutY="14.0" text="User">
@@ -61,7 +61,7 @@
                </styleClass></Button>
          </children>
     </AnchorPane>
-      <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="489.0" prefWidth="644.0">
+      <AnchorPane id="anchorPaneSend" fx:id="anchorPaneSend" maxHeight="-1.0" maxWidth="-1.0" prefHeight="489.0" prefWidth="644.0" visible="false">
          <children>
             <Separator layoutX="-2.0" layoutY="46.0" prefWidth="646.0" />
             <ImageView fitHeight="59.0" fitWidth="64.0" layoutX="114.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
