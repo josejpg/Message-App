@@ -23,6 +23,7 @@ public class MessageApp extends Application {
         Scene scene = new Scene(root, 345, 211);
         stage.setScene(scene);
         stage.setTitle("Login");
+        stage.setResizable(false);
         stage.show();
     }
 

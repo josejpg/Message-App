@@ -73,7 +73,7 @@ public class RegisterController implements Initializable{
     String uriImage = "";
     
     // Actual Stage
-    Stage actualStage = null;
+    private Stage actualStage = null;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -113,14 +113,18 @@ public class RegisterController implements Initializable{
             LoginStage loginStage = new LoginStage();
             loginStage.showStage();
         } catch (IOException ex) {
-            Logger.getLogger(RegisterController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger
+                .getLogger( LoginController.class.getName() )
+                .log( Level.SEVERE, null, ex );
+            MessageUtils.showError( LoginController.class.getName(), ex.getMessage() );
         }
     }
     
     private void setImage(){
         actualStage = (Stage) btnImage.getScene().getWindow();
+        actualStage = (Stage) btnImage.getScene().getWindow();
         FileChooser fileChooser = new FileChooser();
-        File file = fileChooser.showOpenDialog(actualStage);
+        File file = fileChooser.showOpenDialog( actualStage );
         if (file != null) {
             uriImage = file.getPath();
             Image image = new Image( file.toURI().toString() );
@@ -160,6 +164,7 @@ public class RegisterController implements Initializable{
                     MessageUtils.showError( "Error", response.getError() );
                 }else{
                     ServiceUtils.setToken( response.getToken() );
+                    ServiceUtils.setUserData( response );
                     autoLogin(user, gson);
                 }
             });

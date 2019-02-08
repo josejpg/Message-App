@@ -58,7 +58,7 @@ public class LoginController implements Initializable {
     private final APIUtils api = new APIUtils();
     
     // Actual stage
-    Stage actualStage = null;
+    private Stage actualStage = null;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -124,7 +124,8 @@ public class LoginController implements Initializable {
                     MessageUtils.showError( "Error", response.getError() );
                 }else{
                     try {
-                        ServiceUtils.setToken( response.getToken() );  
+                        ServiceUtils.setToken( response.getToken() ); 
+                        ServiceUtils.setUserData( response );
                         actualStage = (Stage) btnLogin.getScene().getWindow();
                         actualStage.close();
                         DashboardStage dashboardStage = new DashboardStage();
