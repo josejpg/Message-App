@@ -10,8 +10,14 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,6 +26,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -28,8 +35,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import message.crud.MessageGet;
-import message.crud.UserPut;
+import message.crud.Delete;
+import message.crud.Get;
+import message.crud.Post;
+import message.crud.Put;
 import message.models.Message;
 import message.models.MessageResponse;
 import message.models.User;
@@ -89,10 +98,14 @@ public class DashboardController implements Initializable {
     // Actual Stage
     private Stage actualStage = null;
     
-    // Message's list
-    List<Message> listMessages = null;
-    
+    // Messages
+    private List<Message> listMessages = null;
+    private Message messageSelected = null;
     private String urlImageMessage = "";
+    
+    // Users
+    private List<User> listUsers = null;
+    private User userSelected = null;
 
     /**
      * Initializes the controller class.
@@ -108,6 +121,7 @@ public class DashboardController implements Initializable {
         btnSendMessage.setDisable(true);
         
         getMessages();
+        getUsers();
         
         lblUser.setText(ServiceUtils.getUserData().getName());
         Image image = new Image( imagePath + ServiceUtils.getUserData().getImage() );
@@ -121,9 +135,14 @@ public class DashboardController implements Initializable {
             getMessages();
         });
         
-        txtMessage.setOnAction((ActionEvent e) ->{
+        btnDelete.setOnAction((ActionEvent e) ->{
+            deleteMessage();
+        });
+        
+        txtMessage.textProperty().addListener((observable, oldValue, newValue) -> {
             if( !txtMessage.getText().equals( "" ) && 
-                !urlImageMessage.equals( "" ) ){
+                !urlImageMessage.equals( "" ) &&
+                userSelected != null){
                 btnSendMessage.setDisable(false);
             }else{
                 btnSendMessage.setDisable(true);
@@ -135,13 +154,16 @@ public class DashboardController implements Initializable {
         });
         
         btnSendMessage.setOnAction((ActionEvent e) ->{
-            //setImageMessage();
+            sendMessage();
         });
     } 
     
+    /**
+     * Get all of message received and call to construct the table
+     */
     private void getMessages(){
         Gson gson = new Gson();
-        MessageGet get = new MessageGet( api.getConnection() + "/messages/", null );
+        Get get = new Get( api.getConnection() + "/messages/", null );
         get.start();
 
         get.setOnSucceeded( e -> {
@@ -158,6 +180,9 @@ public class DashboardController implements Initializable {
         });
     }
     
+    /**
+     * Change image user and call to update it in DB
+     */
     private void setImage(){
         btnImage.setDisable(true);
         actualStage = (Stage) btnImage.getScene().getWindow();
@@ -171,25 +196,10 @@ public class DashboardController implements Initializable {
             btnImage.setDisable(false);
         }
     }
-    
-    private void setImageMessage(){
-        btnImageMessage.setDisable(true);
-        actualStage = (Stage) btnImage.getScene().getWindow();
-        FileChooser fileChooser = new FileChooser();
-        File file = fileChooser.showOpenDialog( actualStage );
-        if (file != null) {
-            Image image = new Image( file.toURI().toString() );
-            prevImageMessage.setImage( image );
-            urlImageMessage = file.getPath();
-            if( !txtMessage.getText().equals( "" ) && 
-                !urlImageMessage.equals( "" ) ){
-                btnSendMessage.setDisable(false);
-            }
-        }else{
-            btnImageMessage.setDisable(true);
-        }
-    }
-    
+    /**
+     * Update user with a new image
+     * @param uriImage 
+     */
     private void updateImageUser( String uriImage ){
         try{
             
@@ -197,7 +207,7 @@ public class DashboardController implements Initializable {
             User user = new User();
             ImageUtils image = new ImageUtils( Paths.get( uriImage ) );
             user.setImage( image.getData() );
-            UserPut put = new UserPut( api.getConnection() + "/users/" + ServiceUtils.getDecodedToken().login, gson.toJson( user ) );
+            Put put = new Put( api.getConnection() + "/users/" + ServiceUtils.getDecodedToken().login, gson.toJson( user ) );
             put.start();
 
             put.setOnSucceeded( e -> {
@@ -219,6 +229,9 @@ public class DashboardController implements Initializable {
         }
     }
     
+    /**
+     * Construct a table with messages received
+     */
     private void createTableMessage(){
         tableMessages.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY );
         TableColumn<Message, String> messageColumn = new TableColumn( "Message" );
@@ -228,25 +241,242 @@ public class DashboardController implements Initializable {
         messageColumn.setCellValueFactory(
             new PropertyValueFactory( "message" )
         );
-        TableColumn<Message, ImageView> imageColumn = new TableColumn( "Image" );
-        imageColumn.setPrefWidth( 120 );
+        TableColumn<Message, String> imageColumn = new TableColumn( "Image" );
+        imageColumn.setPrefWidth( 90 );
         imageColumn.setSortable( false );
         imageColumn.setResizable( false );
         imageColumn.setCellValueFactory(
             new PropertyValueFactory( "image" )
         );
-        TableColumn sentColumn = new TableColumn( "Sent" );
-        sentColumn.setPrefWidth( 120 );
+        TableColumn<Message, Date> sentColumn = new TableColumn( "Sent" );
+        sentColumn.setPrefWidth( 170 );
         sentColumn.setSortable( true );
         sentColumn.setResizable( false );
         sentColumn.setCellValueFactory(
             new PropertyValueFactory( "sent" )
         );
         
+        imageColumn.setCellFactory(e -> new TableCell<Message, String>() {
+            @Override
+            public void updateItem(String item, boolean empty) {
+                // Always invoke super constructor.
+                super.updateItem(item, empty);
+                if( item != null && !item.equals( "empty" ) ) {
+                    Image image = new Image( imagePath + item );
+                    ImageView iv = new ImageView( image );
+                    iv.setPreserveRatio(true);
+                    iv.setFitHeight( 50 );
+                    iv.setFitWidth( 50 );
+                    setGraphic( iv );
+                }else{
+                    setGraphic( null );
+                }
+            }
+        });
+        sentColumn.setCellFactory(e -> new TableCell<Message, Date>() {
+            private final SimpleDateFormat format = new SimpleDateFormat( "dd/MM/yyyy HH:mm" );
+            @Override
+            public void updateItem(Date item, boolean empty) {
+                // Always invoke super constructor.
+                super.updateItem(item, empty);
+                if( item != null ){
+                    setText( format.format(item)  );
+                }else{
+                    setText( null );
+                }
+            }
+        });
+        
+        tableMessages.setRowFactory(tv -> {
+            TableRow<Message> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                messageSelected = row.getItem();
+                btnDelete.setDisable(false);
+            });
+            return row;
+        });
+            
+        
 
         tableMessages.getColumns().clear();
         tableMessages.getItems().clear();
         tableMessages.getColumns().addAll( messageColumn, imageColumn, sentColumn );
         tableMessages.getItems().addAll( listMessages );
+    }
+    
+    /**
+     * Delete a message
+     */
+    private void deleteMessage(){
+        Gson gson = new Gson();
+        
+        Delete delete = new Delete( api.getConnection() + "/messages/" + messageSelected.getID(), null );
+            delete.start();
+
+            delete.setOnSucceeded( e -> {
+                MessageResponse response = gson.fromJson( delete.getValue(), MessageResponse.class );
+                
+                if( !response.responseOk() ){
+                    btnImageMessage.setDisable(false);
+                    MessageUtils.showError( "Error", response.getError() );
+                }else{
+                    btnImageMessage.setDisable(false);
+                    MessageUtils.showMessage("Congratulations", "Your message was deleted.");
+                    getMessages();
+                }
+            });
+            delete.setOnFailed( e -> {
+                System.out.println( delete.getValue() );
+            });
+    }
+    
+    /**
+     * Get all users from DB and call to construct a table
+     */
+    private void getUsers(){
+        Gson gson = new Gson();
+        Get get = new Get( api.getConnection() + "/users/", null );
+        get.start();
+
+        get.setOnSucceeded( e -> {
+            UserResponse response = gson.fromJson( get.getValue(), UserResponse.class );
+            if( !response.responseOk() ){
+                MessageUtils.showError( "Error", response.getError() );
+            }else{
+                List<User> tmpList = response.getUsersList(); 
+                listUsers = new ArrayList<>();
+                tmpList.forEach( dataUser -> {
+                    try {
+                        if( !dataUser.getID().equals( ServiceUtils.getDecodedToken().login ) ){
+                            listUsers.add(dataUser);
+                        }
+                    } catch (UnsupportedEncodingException ex) {
+                        Logger
+                            .getLogger( LoginController.class.getName() )
+                            .log( Level.SEVERE, null, ex );
+                        MessageUtils.showError( LoginController.class.getName(), ex.getMessage() );
+                    }
+                });
+
+                createTableUser();
+            }
+        });
+        get.setOnFailed( e -> {
+          MessageUtils.showError( "Error", "Error on getUsers()" );
+        });
+    }
+    
+    /**
+     * Construct a table with all of users
+     */
+    private void createTableUser(){
+        tableUsers.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY );
+        TableColumn<User, String> avatarColumn = new TableColumn( "Avatar" );
+        avatarColumn.setPrefWidth( 90 );
+        avatarColumn.setSortable( false );
+        avatarColumn.setResizable( false );
+        avatarColumn.setCellValueFactory(
+            new PropertyValueFactory( "image" )
+        );
+        TableColumn<User, String> nickColumn = new TableColumn( "Nick" );
+        nickColumn.setPrefWidth( 520 );
+        nickColumn.setSortable( true );
+        nickColumn.setResizable( false );
+        nickColumn.setCellValueFactory(
+            new PropertyValueFactory( "name" )
+        );
+        
+        avatarColumn.setCellFactory(e -> new TableCell<User, String>() {
+            @Override
+            public void updateItem(String item, boolean empty) {
+                // Always invoke super constructor.
+                super.updateItem(item, empty);
+                if(item != null) {
+                    Image image = new Image( imagePath + item );
+                    ImageView iv = new ImageView( image );
+                    iv.setPreserveRatio(true);
+                    iv.setFitHeight( 50 );
+                    iv.setFitWidth( 50 );
+                    setGraphic( iv );
+                }else{
+                    setGraphic( null );
+                }
+            }
+        });
+        
+        tableUsers.setRowFactory(tv -> {
+            TableRow<User> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                userSelected = row.getItem();
+            });
+            return row;
+        });
+            
+        
+
+        tableUsers.getColumns().clear();
+        tableUsers.getItems().clear();
+        tableUsers.getColumns().addAll( avatarColumn, nickColumn );
+        tableUsers.getItems().addAll( listUsers );
+    }
+    
+    /**
+     * Add a image to a new message
+     */
+    private void setImageMessage(){
+        btnImageMessage.setDisable(true);
+        actualStage = (Stage) btnImage.getScene().getWindow();
+        FileChooser fileChooser = new FileChooser();
+        File file = fileChooser.showOpenDialog( actualStage );
+        if (file != null) {
+            Image image = new Image( file.toURI().toString() );
+            prevImageMessage.setImage( image );
+            urlImageMessage = file.getPath();
+            btnImageMessage.setDisable(false);
+            if( !txtMessage.getText().equals( "" ) && 
+                !urlImageMessage.equals( "" ) &&
+                userSelected != null ){
+                btnSendMessage.setDisable(false);
+            }
+        }else{
+            btnImageMessage.setDisable(true);
+        }
+    }
+    
+    /**
+     * Send a new message
+     */
+    private void sendMessage(){
+        Gson gson = new Gson();
+        Message message = new Message();
+        ImageUtils image = new ImageUtils( Paths.get( urlImageMessage ) );
+        btnSendMessage.setDisable(true);
+        btnImageMessage.setDisable(true);
+        
+        message.setMessage( txtMessage.getText() );
+        message.setImage( image.getData() );
+        message.setSent( Date.from( Instant.now() ) );
+        System.out.println( Date.from( Instant.now() ) );
+        Post post = new Post( api.getConnection() + "/messages/" + userSelected.getID(), gson.toJson( message ) );
+        post.start();
+
+        post.setOnSucceeded( e -> {
+            MessageResponse response = gson.fromJson( post.getValue(), MessageResponse.class );
+            if( !response.responseOk() ){
+                btnSendMessage.setDisable(false);
+                btnImageMessage.setDisable(false);
+                MessageUtils.showError( "Error", response.getError() );
+            }else{
+                userSelected = null;
+                urlImageMessage = "";
+                txtMessage.setText( "" );
+                prevImageMessage.setImage(null);
+                btnImageMessage.setDisable(false);
+                MessageUtils.showMessage("Congratulations", "You're message was sent." );
+            }
+        });
+        post.setOnFailed( e -> {
+            System.out.println( post.getValue() );
+        });
     }
 }    

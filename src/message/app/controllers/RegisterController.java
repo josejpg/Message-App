@@ -8,20 +8,15 @@ package message.app.controllers;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -32,7 +27,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import message.app.stages.DashboardStage;
 import message.app.stages.LoginStage;
-import message.crud.UserPost;
+import message.crud.Post;
 import message.models.User;
 import message.models.UserResponse;
 import message.utils.APIUtils;
@@ -106,6 +101,9 @@ public class RegisterController implements Initializable{
         });
     }
     
+    /**
+     * Close actual stage and back to Login stage
+     */
     private void closeStage(){
         actualStage = (Stage) btnImage.getScene().getWindow();
         actualStage.close();
@@ -120,6 +118,9 @@ public class RegisterController implements Initializable{
         }
     }
     
+    /**
+     * Set a image for a new user
+     */
     private void setImage(){
         actualStage = (Stage) btnImage.getScene().getWindow();
         actualStage = (Stage) btnImage.getScene().getWindow();
@@ -132,6 +133,10 @@ public class RegisterController implements Initializable{
         }
     }
     
+    /**
+     * Send data user to register it in the app
+     * if everything it's ok then do autologin to join into the app
+     */
     private void registerNewUser(){
         Gson gson = new Gson();
         User user = new User();
@@ -152,7 +157,7 @@ public class RegisterController implements Initializable{
             user.setName( txtUser.getText() );
             user.setPassword( txtPassword.getText() );
             user.setImage( image.getData() );
-            UserPost post = new UserPost( api.getConnection() + "/users/register", gson.toJson( user ) );
+            Post post = new Post( api.getConnection() + "/users/register", gson.toJson( user ) );
             post.start();
             
             post.setOnSucceeded( e -> {
@@ -174,8 +179,13 @@ public class RegisterController implements Initializable{
         }
     }
     
+    /**
+     * Do login with the new user and join into the app
+     * @param user
+     * @param gson 
+     */
     private void autoLogin(User user, Gson gson){
-        UserPost post = new UserPost( api.getConnection() + "/users/login", gson.toJson( user ) );
+        Post post = new Post( api.getConnection() + "/users/login", gson.toJson( user ) );
             post.start();
             
             post.setOnSucceeded( e -> {

@@ -13,11 +13,11 @@ import static message.utils.ServiceUtils.getResponse;
  *
  * @author Jose J. Pardines Garcia
  */
-public class UserPut extends Service<String>{
-     String url;
+public class Put extends Service<String>{
+    String url;
     String data;
 
-    public UserPut( String url, String data) {
+    public Put( String url, String data) {
         this.url = url;
         this.data = data;
     }

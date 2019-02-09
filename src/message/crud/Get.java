@@ -13,11 +13,11 @@ import static message.utils.ServiceUtils.getResponse;
  *
  * @author Jose J. Pardines Garcia
  */
-public class MessageGet extends Service<String> {
+public class Get extends Service<String> {
     String url;
     String data;
 
-    public MessageGet( String url, String data) {
+    public Get( String url, String data) {
         this.url = url;
         this.data = data;
     }

@@ -5,7 +5,6 @@
  */
 package message.crud;
 
-import com.google.gson.Gson;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import static message.utils.ServiceUtils.getResponse;
@@ -14,12 +13,11 @@ import static message.utils.ServiceUtils.getResponse;
  *
  * @author Jose J. Pardines Garcia
  */
-public class UserPost extends Service<String>{
-    
+public class Delete  extends Service<String> {
     String url;
     String data;
 
-    public UserPost( String url, String data) {
+    public Delete( String url, String data) {
         this.url = url;
         this.data = data;
     }
@@ -29,7 +27,7 @@ public class UserPost extends Service<String>{
         return new Task<String>() {
             @Override
             protected String call() throws Exception {
-                return getResponse( "POST", url, data );
+                return getResponse( "DELETE", url, data );
             }
         };
     }
