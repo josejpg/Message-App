@@ -22,11 +22,13 @@ public class LoginStage {
     
     public LoginStage() throws IOException {
         stage = new Stage();
+        stage.setResizable(false);
         stage.initModality(Modality.APPLICATION_MODAL);
         Parent root = FXMLLoader.load(getClass().getResource("/message/app/templates/loginTemplate.fxml"));      
         scene = new Scene(root, 345, 211);
         stage.setScene(scene);
         stage.setTitle("Login");
+        stage.setResizable(false);
     }
     
     public Scene getScene(){ return this.scene; }

@@ -6,7 +6,6 @@
 package message.app.controllers;
 
 import com.google.gson.Gson;
-import java.awt.Event;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -14,24 +13,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import message.app.stages.DashboardStage;
 import message.app.stages.RegisterStage;
 import message.models.*;
 import message.utils.*;
-import message.crud.UserPost;
+import message.crud.Post;
 
 /**
  *
@@ -58,7 +52,7 @@ public class LoginController implements Initializable {
     private final APIUtils api = new APIUtils();
     
     // Actual stage
-    Stage actualStage = null;
+    private Stage actualStage = null;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -98,7 +92,9 @@ public class LoginController implements Initializable {
         });
     }
     
-    
+    /**
+     * Send data to login user
+     */
     private void submitLogin(){
         Gson gson = new Gson();
         User user = new User();
@@ -112,7 +108,7 @@ public class LoginController implements Initializable {
             lnkRegister.setDisable(true);
             user.setName( txtUser.getText() );
             user.setPassword(txtPassword.getText() );
-            UserPost post = new UserPost( api.getConnection() + "/users/login", gson.toJson( user ) );
+            Post post = new Post( api.getConnection() + "/users/login", gson.toJson( user ) );
             post.start();
             
             post.setOnSucceeded( e -> {
@@ -124,7 +120,8 @@ public class LoginController implements Initializable {
                     MessageUtils.showError( "Error", response.getError() );
                 }else{
                     try {
-                        ServiceUtils.setToken( response.getToken() );  
+                        ServiceUtils.setToken( response.getToken() ); 
+                        ServiceUtils.setUserData( response );
                         actualStage = (Stage) btnLogin.getScene().getWindow();
                         actualStage.close();
                         DashboardStage dashboardStage = new DashboardStage();
@@ -143,6 +140,9 @@ public class LoginController implements Initializable {
         }
     }
     
+    /**
+     * Open a new Stage to register a new user
+     */
     private void newReigster(){
         try {
             txtUser.setDisable(true);

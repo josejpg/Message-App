@@ -11,11 +11,15 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.StringJoiner;
 import java.util.zip.GZIPInputStream;
 import javafx.concurrent.Task;
+import message.models.DecodedToken;
+import message.models.User;
+import message.models.UserResponse;
 
 /**
  *
@@ -23,12 +27,21 @@ import javafx.concurrent.Task;
  */
 public class ServiceUtils {
     private static String token = null;
+    private static UserResponse user = null;
     public static void setToken(String token) {
         ServiceUtils.token = token;
     }
     public static void removeToken() {
         ServiceUtils.token = null;
     }
+    public static String getToken(){ 
+        return ServiceUtils.token; 
+    }
+    public static DecodedToken getDecodedToken() throws UnsupportedEncodingException{ 
+        return DecodedToken.getDecoded(ServiceUtils.token); 
+    }
+    public static void setUserData(UserResponse user){ ServiceUtils.user = user;}
+    public static UserResponse getUserData(){ return ServiceUtils.user;}
     public static String getCharset(String contentType) {
         for (String param : contentType.replace(" ", "").split(";")) {
             if (param.startsWith("charset=")) {

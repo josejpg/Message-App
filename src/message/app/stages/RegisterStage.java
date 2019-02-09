@@ -22,11 +22,13 @@ public class RegisterStage {
     
     public RegisterStage() throws IOException {
         stage = new Stage();
+        stage.setResizable(false);
         stage.initModality(Modality.APPLICATION_MODAL);
         Parent root = FXMLLoader.load(getClass().getResource("/message/app/templates/registerTemplate.fxml"));
         scene = new Scene(root, 422, 218);
         stage.setScene(scene);
         stage.setTitle("Register");
+        stage.setResizable(false);
     }
     
     public Scene getScene(){ return this.scene; }

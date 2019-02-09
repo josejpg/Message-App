@@ -22,11 +22,13 @@ public class DashboardStage {
     
     public DashboardStage() throws IOException {
         stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setResizable(false);
+        stage.initModality(Modality.WINDOW_MODAL);
         Parent root = FXMLLoader.load(getClass().getResource("/message/app/templates/dashboardTemplate.fxml"));      
-        scene = new Scene(root, 644, 420);
+        scene = new Scene(root, 671, 420);
         stage.setScene(scene);
         stage.setTitle("Dashboard");
+        stage.setResizable(false);
     }
     
     public Scene getScene(){ return this.scene; }
